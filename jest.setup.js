@@ -1,4 +1,4 @@
-import 'isomorphic-fetch'
+require('isomorphic-fetch')
 
 if (typeof btoa === 'undefined') {
   global.btoa = function (str) {

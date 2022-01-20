@@ -21,11 +21,12 @@ export function collectUrls(svg: string): UrlOccurrences {
 
 export async function fetchData(url: string): Promise<string> {
   const response = await fetch(url)
+  // console.log(url, response)
   if (!response.ok || !response.body) {
     throw new Error('could not fetch')
   }
 
-  const contentType = response.headers.get('Content-Type')
+  const contentType = response.headers.get('content-type')
   const bytes = new Uint8Array(await response.arrayBuffer())
   const binary = String.fromCharCode(...bytes)
   return `data:${contentType};base64,${btoa(binary)}`
@@ -51,7 +52,30 @@ export async function handleRequest(request: Request): Promise<Response> {
   const svg = atob(pathname.substring(prefix.length))
   const urls = collectUrls(svg)
 
-  const dataUris = await Promise.allSettled(Object.keys(urls).map(fetchData))
+  const dataUris = (await Promise.allSettled(Object.keys(urls).map(fetchData)))
+    .map((promiseResult) =>
+      'value' in promiseResult ? promiseResult.value : '',
+    )
+    .filter((uri) => !!uri)
 
-  return new Response(`request path: ${svg}`)
+  // console.log(dataUris)
+  const replacements = Object.entries(urls)
+    .map(([uri, positions], i) =>
+      positions.map((position) => ({
+        start: position,
+        end: position + uri.length,
+        dataUri: dataUris[i],
+      })),
+    )
+    .flat()
+  console.log(replacements)
+  const result = replacements.reduce(
+    (result, replacement) =>
+      result.substring(0, replacement.start) +
+      replacement.dataUri +
+      result.substring(replacement.end),
+    svg,
+  )
+
+  return new Response(result, { headers: { 'content-type': 'image/svg+xml' } })
 }
