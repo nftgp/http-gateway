@@ -17,7 +17,7 @@ The problem is that browsers restrict SVGs from loading external references if r
 So while the SVG displays fine when directly opened it will appear broken in OpenSea or any other NFT wallets.
 
 This is where the Chainpic gateway comes into play.
-Prepend the host of the gateway to to the data URI and you get a version of the same SVG that displays flawlessly on any website.
+Prepend the address of gateway to the data URI and you get a version of the same SVG that displays flawlessly on any website.
 
 Example:
 
