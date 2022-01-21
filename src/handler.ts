@@ -27,6 +27,8 @@ export async function fetchData(url: string): Promise<string> {
     throw new Error('could not fetch')
   }
 
+  const contentType = response.headers.get('content-type')
+
   let result = ''
   let bytesReceived = 0
   const reader = response.body.getReader()
@@ -53,7 +55,7 @@ export async function fetchData(url: string): Promise<string> {
     await processChunk(await reader.read())
   }
   await processChunk(await reader.read())
-  console.log(result)
+  // console.log(result)
   // try {
   //   const contentType = response.headers.get('content-type')
   //   console.log(url, contentType)
@@ -65,7 +67,7 @@ export async function fetchData(url: string): Promise<string> {
   //   console.log(url, e)
   // }
 
-  return btoa(result)
+  return `data:${contentType};base64,${btoa(result)}`
 }
 
 export async function handleRequest(request: Request): Promise<Response> {
@@ -88,11 +90,11 @@ export async function handleRequest(request: Request): Promise<Response> {
   const svg = atob(pathname.substring(prefix.length))
   const urls = collectUrls(svg)
 
-  const dataUris = await Promise.all(Object.keys(urls).map(fetchData))
-  // .map((promiseResult) =>
-  //   'value' in promiseResult ? promiseResult.value : '',
-  // )
-  // .filter((uri) => !!uri)
+  const dataUris = (await Promise.allSettled(Object.keys(urls).map(fetchData)))
+    .map((promiseResult) =>
+      'value' in promiseResult ? promiseResult.value : '',
+    )
+    .filter((uri) => !!uri)
 
   console.log(dataUris)
   const replacements = Object.entries(urls)
