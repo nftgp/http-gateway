@@ -46,7 +46,7 @@ By appending the chainpic gateway host to the data URI we can make it work:
 
 Various thumbnail services have similar restrictions and won't fetch any resources linked in an SVG.
 Looking at Github markdown, it [won't even allow embedding images with data URIs](https://github.com/github/markup/issues/270).
-When uploading our example SVG to a server, we can use it in markdown files, but Github will generate just an empty thumbnail:
+When uploading our example SVG to a server, we can use it in markdown files, but it will still appear broken:
 
 > ![broken SVG img](https://gateway.pinata.cloud/ipfs/QmcPQs7dbrFGnAdfnaTaVoN7BfF5ZDQWK5NwNaBjnVtbZS)
 
