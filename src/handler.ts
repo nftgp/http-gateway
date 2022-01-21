@@ -19,7 +19,7 @@ export function collectUrls(svg: string): UrlOccurrences {
   }, {} as UrlOccurrences)
 }
 
-const MAX_FILE_SIZE = 128000 // 128kb
+const MAX_FILE_SIZE = 256000 // 256kb
 
 export async function fetchData(url: string): Promise<string> {
   const response = await fetch(url)
@@ -30,7 +30,7 @@ export async function fetchData(url: string): Promise<string> {
   let result = ''
   let bytesReceived = 0
   const reader = response.body.getReader()
-  console.log('ok')
+  const decoder = new TextDecoder()
   async function processChunk({
     done,
     value,
@@ -40,19 +40,20 @@ export async function fetchData(url: string): Promise<string> {
     if (!value) throw Error('empty chunk but not done')
 
     bytesReceived += value.length
+
+    console.log(bytesReceived)
     if (bytesReceived > MAX_FILE_SIZE) {
       throw new Error(
         `linked file ${url} exceeds limit of ${MAX_FILE_SIZE / 1000}kb`,
       )
     }
-
-    console.log(bytesReceived, value)
+    result += decoder.decode(value, { stream: true })
 
     // Recurse until reaching the end of the stream
-    processChunk(await reader.read())
+    await processChunk(await reader.read())
   }
-  processChunk(await reader.read())
-  console.log('22')
+  await processChunk(await reader.read())
+  console.log(result)
   // try {
   //   const contentType = response.headers.get('content-type')
   //   console.log(url, contentType)
@@ -64,7 +65,7 @@ export async function fetchData(url: string): Promise<string> {
   //   console.log(url, e)
   // }
 
-  return ''
+  return btoa(result)
 }
 
 export async function handleRequest(request: Request): Promise<Response> {
