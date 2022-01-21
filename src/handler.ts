@@ -113,9 +113,9 @@ export async function handleRequest(request: Request): Promise<Response> {
 
   const headers: HeadersInit = new Headers()
   headers.set('content-type', 'image/svg+xml')
-  if (warnings.length > 0) {
-    headers.set('x-chainpic-warning', warnings.join('\n'))
-  }
+  warnings.forEach((warning) => {
+    headers.append('x-chainpic-warning', warning)
+  })
 
   return new Response(result, { headers })
 }
