@@ -90,14 +90,13 @@ export async function handleRequest(request: Request): Promise<Response> {
   const svg = atob(pathname.substring(prefix.length))
   const urls = collectUrls(svg)
 
-  const dataUris = (await Promise.allSettled(Object.keys(urls).map(fetchData)))
-    .map((promiseResult) =>
-      'value' in promiseResult ? promiseResult.value : '',
-    )
-    .filter((uri) => !!uri)
+  const dataUris = await Promise.all(Object.keys(urls).map(fetchData))
+  // .map(
+  //   (promiseResult) => ('value' in promiseResult ? promiseResult.value : ''),
+  // )
 
-  console.log(dataUris)
   const replacements = Object.entries(urls)
+    .filter((url, i) => !!dataUris[i])
     .map(([uri, positions], i) =>
       positions.map((position) => ({
         start: position,
