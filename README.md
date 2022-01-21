@@ -62,5 +62,5 @@ However, by going through the chainpic gateway the SVG thumbnail will be generat
 
 ## Limits
 
-Cloudfare URLs have a limit of 16 KB, which means the maximum base64 encodable file size is slightly less than 12 KB.
+Cloudflare URLs have a limit of 16 KB, which means the maximum base64 encodable file size is slightly less than 12 KB.
 So the on-chain generated SVG must stay below that limit.
