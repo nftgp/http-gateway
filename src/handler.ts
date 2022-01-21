@@ -26,49 +26,44 @@ export async function fetchData(url: string): Promise<string> {
   if (!response.ok || !response.body) {
     throw new Error('could not fetch')
   }
-  try {
-    let result = ''
-    let bytesReceived = 0
-    let { readable, writable } = new TransformStream()
-    const reader = readable.getReader()
-    response.body.pipeTo(writable)
-    console.log('ok')
 
-    const processChunk = async ({
-      done,
-      value,
-    }: ReadableStreamReadResult<Uint8Array>) => {
-      console.log(done, value)
-      if (done) return
-      if (!value) throw Error('empty chunk but not done')
+  let result = ''
+  let bytesReceived = 0
+  const reader = response.body.getReader()
+  console.log('ok')
+  async function processChunk({
+    done,
+    value,
+  }: ReadableStreamReadResult<Uint8Array>) {
+    console.log(done, value)
+    if (done) return
+    if (!value) throw Error('empty chunk but not done')
 
-      bytesReceived += value.length
-      if (bytesReceived > MAX_FILE_SIZE) {
-        throw new Error(
-          `linked file ${url} exceeds limit of ${MAX_FILE_SIZE / 1000}kb`,
-        )
-      }
-
-      console.log(bytesReceived, value)
-
-      // Recurse until reaching the end of the stream
-      processChunk(await reader.read())
+    bytesReceived += value.length
+    if (bytesReceived > MAX_FILE_SIZE) {
+      throw new Error(
+        `linked file ${url} exceeds limit of ${MAX_FILE_SIZE / 1000}kb`,
+      )
     }
-    processChunk(await reader.read())
-    console.log('22')
-    // try {
-    //   const contentType = response.headers.get('content-type')
-    //   console.log(url, contentType)
-    //   const bytes = new Uint8Array(await response.arrayBuffer())
 
-    //   const binary = String.fromCharCode(...bytes)
-    //   return `data:${contentType};base64,${btoa(binary)}`
-    // } catch (e) {
-    //   console.log(url, e)
-    // }
-  } catch (e) {
-    console.log(e)
+    console.log(bytesReceived, value)
+
+    // Recurse until reaching the end of the stream
+    processChunk(await reader.read())
   }
+  processChunk(await reader.read())
+  console.log('22')
+  // try {
+  //   const contentType = response.headers.get('content-type')
+  //   console.log(url, contentType)
+  //   const bytes = new Uint8Array(await response.arrayBuffer())
+
+  //   const binary = String.fromCharCode(...bytes)
+  //   return `data:${contentType};base64,${btoa(binary)}`
+  // } catch (e) {
+  //   console.log(url, e)
+  // }
+
   return ''
 }
 
@@ -92,11 +87,11 @@ export async function handleRequest(request: Request): Promise<Response> {
   const svg = atob(pathname.substring(prefix.length))
   const urls = collectUrls(svg)
 
-  const dataUris = (await Promise.allSettled(Object.keys(urls).map(fetchData)))
-    .map((promiseResult) =>
-      'value' in promiseResult ? promiseResult.value : '',
-    )
-    .filter((uri) => !!uri)
+  const dataUris = await Promise.all(Object.keys(urls).map(fetchData))
+  // .map((promiseResult) =>
+  //   'value' in promiseResult ? promiseResult.value : '',
+  // )
+  // .filter((uri) => !!uri)
 
   console.log(dataUris)
   const replacements = Object.entries(urls)
