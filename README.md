@@ -2,6 +2,8 @@
 
 A http gateway for images that are stored or generated on chain, implemented as a Cloudflare worker.
 
+> https://svg.chainpic.workers.dev/
+
 ## SVG for on-chain images
 
 SVG is a useful format for generating images on a blockchain as it allows for a compact vector-based representation.
@@ -40,9 +42,13 @@ However, when trying to present this SVG with an HTML `img` tag, it appears brok
 
 > https://jsfiddle.net/tg4epksn/0/ 💔
 
-By appending the chainpic gateway host to the data URI we can make it work:
+By prepending the chainpic gateway host to the data URI we can make it work:
 
 > https://jsfiddle.net/tg4epksn/1/ 🎉
+
+```
+https://svg.chainpic.workers.dev/data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1UUXJQR0RmMnhpZ0FLMnB0RGhka3ZTRjJFZlJNWHBhRkdKS0JOUktZUkJIdiIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+
+```
 
 Various thumbnail services have similar restrictions and won't fetch any resources linked in an SVG.
 Looking at Github markdown, it [won't even allow embedding images with data URIs](https://github.com/github/markup/issues/270).
