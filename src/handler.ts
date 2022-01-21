@@ -32,41 +32,28 @@ export async function fetchData(url: string): Promise<string> {
   let result = ''
   let bytesReceived = 0
   const reader = response.body.getReader()
-  const decoder = new TextDecoder()
+
   async function processChunk({
     done,
     value,
   }: ReadableStreamReadResult<Uint8Array>) {
-    console.log(done, value)
     if (done) return
     if (!value) throw Error('empty chunk but not done')
 
     bytesReceived += value.length
 
-    console.log(bytesReceived)
     if (bytesReceived > MAX_FILE_SIZE) {
       throw new Error(
         `linked file ${url} exceeds limit of ${MAX_FILE_SIZE / 1000}kb`,
       )
     }
-    result += decoder.decode(value, { stream: true })
+    result += String.fromCharCode(...value)
 
     // Recurse until reaching the end of the stream
     await processChunk(await reader.read())
   }
+
   await processChunk(await reader.read())
-  // console.log(result)
-  // try {
-  //   const contentType = response.headers.get('content-type')
-  //   console.log(url, contentType)
-  //   const bytes = new Uint8Array(await response.arrayBuffer())
-
-  //   const binary = String.fromCharCode(...bytes)
-  //   return `data:${contentType};base64,${btoa(binary)}`
-  // } catch (e) {
-  //   console.log(url, e)
-  // }
-
   return `data:${contentType};base64,${btoa(result)}`
 }
 
@@ -90,13 +77,23 @@ export async function handleRequest(request: Request): Promise<Response> {
   const svg = atob(pathname.substring(prefix.length))
   const urls = collectUrls(svg)
 
-  const dataUris = await Promise.all(Object.keys(urls).map(fetchData))
-  // .map(
-  //   (promiseResult) => ('value' in promiseResult ? promiseResult.value : ''),
-  // )
+  const warnings: string[] = []
+  const dataUris = await Promise.all(
+    Object.keys(urls).map(async (url) => {
+      try {
+        return await fetchData(url)
+      } catch (e) {
+        const { message } = e as Error
+        warnings.push(message)
+        console.warn(message)
+      }
+
+      return null
+    }),
+  )
 
   const replacements = Object.entries(urls)
-    .filter((url, i) => !!dataUris[i])
+    .filter((_, i) => !!dataUris[i])
     .map(([uri, positions], i) =>
       positions.map((position) => ({
         start: position,
@@ -105,7 +102,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       })),
     )
     .flat()
-  console.log(replacements)
+
   const result = replacements.reduce(
     (result, replacement) =>
       result.substring(0, replacement.start) +
@@ -114,5 +111,11 @@ export async function handleRequest(request: Request): Promise<Response> {
     svg,
   )
 
-  return new Response(result, { headers: { 'content-type': 'image/svg+xml' } })
+  const headers: HeadersInit = new Headers()
+  headers.set('content-type', 'image/svg+xml')
+  if (warnings.length > 0) {
+    headers.set('x-chainpic-warning', warnings.join('\n'))
+  }
+
+  return new Response(result, { headers })
 }
