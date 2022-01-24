@@ -11,7 +11,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   if (!pathname.startsWith(prefix)) {
     return new Response(null, {
       status: 400,
-      statusText: 'Path must be a data: URI',
+      statusText: 'Path must be a base64 encoded data: URI',
     })
   }
 
@@ -46,7 +46,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 
   const result = replaceSubstrings(svg, replacements)
 
-  const headers: HeadersInit = new Headers()
+  const headers: HeadersInit = new Headers({})
   headers.set('content-type', 'image/svg+xml')
   warnings.forEach((warning) => {
     headers.append('x-chainpic-warning', warning)

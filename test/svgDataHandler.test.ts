@@ -3,12 +3,12 @@ import {
   collectUrls,
   fetchData,
   replaceSubstrings,
-} from '../src/handler'
+} from '../src/svgDataHandler'
 import makeServiceWorkerEnv from 'service-worker-mock'
 
 declare const global: unknown
 
-describe('handle', () => {
+describe('handleRequest', () => {
   beforeEach(() => {
     Object.assign(global, makeServiceWorkerEnv())
     jest.resetModules()
