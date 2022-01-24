@@ -64,3 +64,6 @@ However, by going through the chainpic gateway the SVG thumbnail will be generat
 
 Cloudflare URLs have a limit of 16 KB, which means the maximum base64 encodable file size is slightly less than 12 KB.
 So the on-chain generated SVG must stay below that limit.
+
+Also there is a limit of 2 MB to the file size of resources.
+Any resource with a larger file size won't be inlined, but the original URI is left untouched.
