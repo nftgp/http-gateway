@@ -15,7 +15,8 @@
   "eslintConfig": {
     "root": true,
     "ignorePatterns": [
-      "jest\\.setup\\.js"
+      "jest\\.setup\\.js",
+      "webpack\\.config\\.js"
     ],
     "extends": [
       "typescript",
@@ -40,5 +41,8 @@
     "typescript": "^4.3.2",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0"
+  },
+  "dependencies": {
+    "@ethersproject/abi": "^5.5.0"
   }
 }

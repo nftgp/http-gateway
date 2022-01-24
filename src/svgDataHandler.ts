@@ -49,7 +49,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   const headers: HeadersInit = new Headers({})
   headers.set('content-type', 'image/svg+xml')
   warnings.forEach((warning) => {
-    headers.append('x-chainpic-warning', warning)
+    headers.append('x-nftgp-warning', warning)
   })
 
   return new Response(result, { headers })

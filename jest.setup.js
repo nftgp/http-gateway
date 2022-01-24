@@ -1,5 +1,7 @@
 const isoFetch = require('isomorphic-fetch')
 
+global.INFURA_ID = 'e301e57e9a51407eb39df231874e0563'
+
 if (typeof btoa === 'undefined') {
   global.btoa = function (str) {
     return Buffer.from(str, 'binary').toString('base64')
