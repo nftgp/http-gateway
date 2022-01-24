@@ -1,8 +1,8 @@
-name = "svg"
+name = "nft-gateway"
 type = "javascript"
-zone_id = ""
-account_id = ""
-route = ""
+zone_id = "f1f416af42fa613a9f7f46ccd658e640"
+account_id = "5d8926b42c2217037b346a95c38ed15a"
+routes = ["*nftgp.io/nft:*", "*nftgp.io/data:*"]
 workers_dev = true
 compatibility_date = "2022-01-20"
 
