@@ -1,14 +1,9 @@
-# Chainpic
+# NFT HTTP Gateway
 
-A http gateway for images that are stored or generated on chain, implemented as a Cloudflare worker.
+An http gateway using the NFT Gateway Protocol, implemented as a Cloudflare worker.
 
-> https://svg.chainpic.workers.dev/
+> https://nftgp.io/
 
-## SVG for on-chain images
-
-SVG is a useful format for generating images on a blockchain as it allows for a compact vector-based representation.
-Importantly, it can use external resources, like fonts, other SVG files, or raster images, by referencing them via URL.
-So we can store larger image layers off-chain and compose these into an SVG with small file size.
 
 ## Viewing on-chain images
 
@@ -18,7 +13,7 @@ To view the image, you can simply paste such a URI into your browser's address b
 The problem is that browsers restrict SVGs from loading external references if rendered in `<img>` tags.
 So while the SVG displays fine when directly opened it will appear broken in OpenSea or any other NFT wallets.
 
-This is where the Chainpic gateway comes into play.
+This is where the NFT HTTP gateway comes into play.
 Prepend the address of gateway to the data URI and you get a version of the same SVG that displays flawlessly on any website.
 
 ## Example:
@@ -42,12 +37,12 @@ However, when trying to present this SVG with an HTML `img` tag, it appears brok
 
 > https://jsfiddle.net/tg4epksn/0/ 💔
 
-By prepending the chainpic gateway host to the data URI we can make it work:
+By prepending the http gateway host to the data URI we can make it work:
 
 > https://jsfiddle.net/tg4epksn/1/ 🎉
 
 ```
-https://svg.chainpic.workers.dev/data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1UUXJQR0RmMnhpZ0FLMnB0RGhka3ZTRjJFZlJNWHBhRkdKS0JOUktZUkJIdiIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+
+https://nftgp.io/data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1UUXJQR0RmMnhpZ0FLMnB0RGhka3ZTRjJFZlJNWHBhRkdKS0JOUktZUkJIdiIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+
 ```
 
 Various thumbnail services have similar restrictions and won't fetch any resources linked in an SVG.
@@ -56,9 +51,9 @@ When uploading our example SVG to a server, we can use it in markdown files, but
 
 > ![broken SVG img](https://gateway.pinata.cloud/ipfs/QmcPQs7dbrFGnAdfnaTaVoN7BfF5ZDQWK5NwNaBjnVtbZS)
 
-However, by going through the chainpic gateway the SVG thumbnail will be generated correctly:
+However, by going through the NFT http gateway the SVG thumbnail will be generated correctly:
 
-> ![working SVG img](https://svg.chainpic.workers.dev/data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1UUXJQR0RmMnhpZ0FLMnB0RGhka3ZTRjJFZlJNWHBhRkdKS0JOUktZUkJIdiIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+)
+> ![working SVG img](https://nftgp.io/data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1UUXJQR0RmMnhpZ0FLMnB0RGhka3ZTRjJFZlJNWHBhRkdKS0JOUktZUkJIdiIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+)
 
 ## Limits
 
