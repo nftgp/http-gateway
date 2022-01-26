@@ -29,13 +29,16 @@ export async function handleRequest(request: Request): Promise<Response> {
     })
   }
 
-  if (tokenUrl.protocol === 'http' || tokenUrl.protocol === 'https') {
+  if (tokenUrl.protocol === 'http:' || tokenUrl.protocol === 'https:') {
     return fetchAndStream(tokenUriString)
-  } else if (tokenUrl.protocol === 'ipfs') {
+  } else if (tokenUrl.protocol === 'ipfs:') {
     return fetchAndStream(ipfsUriToGatwayUri(tokenUriString))
   }
 
-  return new Response('TODO: ' + pathname)
+  return new Response(null, {
+    status: 502,
+    statusText: `Token URI uses an unsupported protocol (${tokenUrl.protocol})`,
+  })
 }
 
 interface JSONObject {
@@ -46,9 +49,10 @@ async function fetchAndStream(uri: string): Promise<Response> {
   const response = await fetch(uri)
 
   if (!response.ok) {
+    console.log(await response.text())
     return new Response(null, {
       status: 502,
-      statusText: `Error fetching token URI ${uri}: ${response.status} - ${response.statusText}`,
+      statusText: `Error fetching token URI ${uri} (${response.status}: ${response.statusText})`,
     })
   }
 
@@ -82,13 +86,13 @@ async function fetchAndStream(uri: string): Promise<Response> {
     // The json does not seem to be ERC721 Metadata, so we consider it to be the token itself.
     const headers: HeadersInit = new Headers({})
     headers.set('content-type', 'application/json')
-
     return new Response(JSON.stringify(json), { headers })
   }
 
   // Stream response
   const { readable, writable } = new TransformStream()
   response.body.pipeTo(writable)
+
   return new Response(readable, response)
 }
 

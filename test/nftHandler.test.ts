@@ -23,6 +23,7 @@ describe('nft scheme uri handling', () => {
           },
         ),
       )
+      console.log(result.statusText)
       expect(result.status).toEqual(200)
       const text = await result.text()
       expect(text).toBe('Hello world!')
@@ -169,7 +170,7 @@ describe('nft scheme uri handling', () => {
   })
 
   describe('fetchTokenUri', () => {
-    it('should fetch the tokenURI', async () => {
+    it.only('should fetch the tokenURI', async () => {
       expect(
         await fetchTokenUri(
           parseNftSchemeUri(

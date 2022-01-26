@@ -2,9 +2,9 @@ import { handleRequest as handleNftRequest } from './nftHandler'
 import { handleRequest as handleSvgDataRequest } from './svgDataHandler'
 import { handleRequest as handleGenericDataRequest } from './genericDataHandler'
 
-declare global {
-  const INFURA_ID: string
-}
+// declare global {
+//   const INFURA_ID: string
+// }
 
 addEventListener('fetch', (event) => {
   const { pathname } = new URL(event.request.url)

@@ -1,3 +1,5 @@
+declare const INFURA_ID: string
+
 const RPC_ENDPOINTS: { [chainId: number]: string } = {
   1: `https://mainnet.infura.io/v3/${INFURA_ID}`,
   4: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
