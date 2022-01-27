@@ -89,11 +89,7 @@ async function fetchAndStream(uri: string): Promise<Response> {
     return new Response(JSON.stringify(json), { headers })
   }
 
-  // Stream response
-  const { readable, writable } = new TransformStream()
-  response.body.pipeTo(writable)
-
-  return new Response(readable, response)
+  return response
 }
 
 interface NftUri {

@@ -170,7 +170,7 @@ describe('nft scheme uri handling', () => {
   })
 
   describe('fetchTokenUri', () => {
-    it.only('should fetch the tokenURI', async () => {
+    it('should fetch the tokenURI', async () => {
       expect(
         await fetchTokenUri(
           parseNftSchemeUri(
