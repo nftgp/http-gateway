@@ -10,6 +10,3 @@ compatibility_date = "2022-01-20"
 command = "npm install && npm run build"
 [build.upload]
 format = "service-worker"
-
-[vars]
-INFURA_ID = "e301e57e9a51407eb39df231874e0563"
