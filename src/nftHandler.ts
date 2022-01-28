@@ -1,4 +1,5 @@
 import { AbiCoder } from '@ethersproject/abi'
+import { handleDataUri } from './dataHandler'
 import { ipfsUriToGatewayUri } from './ipfs'
 import { call } from './jsonRpc'
 
@@ -19,30 +20,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     })
   }
 
-  let tokenUrl: URL
-  try {
-    tokenUrl = new URL(tokenUriString)
-  } catch (e) {
-    return new Response(null, {
-      status: 502,
-      statusText: `tokenURI value "${tokenUriString}" is not a valid URI`,
-    })
-  }
-
-  if (
-    tokenUrl.protocol === 'http:' ||
-    tokenUrl.protocol === 'https:' ||
-    tokenUrl.protocol === 'data:'
-  ) {
-    return fetchTokenData(tokenUriString)
-  } else if (tokenUrl.protocol === 'ipfs:') {
-    return fetchTokenData(ipfsUriToGatewayUri(tokenUriString))
-  }
-
-  return new Response(null, {
-    status: 502,
-    statusText: `Token URI uses an unsupported protocol (${tokenUrl.protocol})`,
-  })
+  return fetchTokenData(tokenUriString)
 }
 
 interface JSONObject {
@@ -51,7 +29,34 @@ interface JSONObject {
 
 // A wrapper around fetch that can handle data scheme URIs and resolves EIP-721 JSON metadata files.
 async function fetchTokenData(uri: string): Promise<Response> {
-  const response = await fetch(uri)
+  let url: URL
+  try {
+    url = new URL(uri)
+  } catch (e) {
+    return new Response(null, {
+      status: 502,
+      statusText: `"${uri}" is not a valid URI`,
+    })
+  }
+
+  let response: Response
+  switch (url.protocol) {
+    case 'http:':
+    case 'https:':
+      response = await fetch(uri)
+      break
+    case 'ipfs:':
+      response = await fetch(ipfsUriToGatewayUri(uri))
+      break
+    case 'data:':
+      response = await handleDataUri(uri)
+      break
+    default:
+      return new Response(null, {
+        status: 502,
+        statusText: `${uri} URI has an unsupported protocol`,
+      })
+  }
 
   if (!response.ok) {
     if (response.status === 404) {
