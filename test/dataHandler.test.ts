@@ -3,19 +3,30 @@ import {
   collectUrls,
   fetchData,
   replaceSubstrings,
-} from '../src/svgDataHandler'
+} from '../src/dataHandler'
 import makeServiceWorkerEnv from 'service-worker-mock'
 
 declare const global: unknown
 
-describe('svg data handling', () => {
+describe('data scheme uri handling', () => {
   describe('handleRequest', () => {
     beforeEach(() => {
       Object.assign(global, makeServiceWorkerEnv())
       jest.resetModules()
     })
 
-    it('handle GET', async () => {
+    it('handles generic data ', async () => {
+      const result = await handleRequest(
+        new Request('/data:text/plain;base64,SGVsbG8gd29ybGQh', {
+          method: 'GET',
+        }),
+      )
+      expect(result.status).toEqual(200)
+      const text = await result.text()
+      expect(text).toBe('Hello world!')
+    })
+
+    it('handles svg data', async () => {
       const result = await handleRequest(
         new Request(
           '/data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1XNXptUjJjOXhqeU03OTVWUkFjRjViV0g5NGNtemtqc2JqNUNqNFN4Q3BpVSIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+',

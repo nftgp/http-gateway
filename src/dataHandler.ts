@@ -7,15 +7,38 @@ export async function handleRequest(request: Request): Promise<Response> {
   }
 
   const { pathname } = new URL(request.url)
-  const prefix = '/data:image/svg+xml;base64,'
-  if (!pathname.startsWith(prefix)) {
+  if (!pathname.startsWith('/data:')) {
     return new Response(null, {
       status: 400,
-      statusText: 'Path must be a base64 encoded data: URI',
+      statusText: 'Path must a data: URI',
     })
   }
 
-  const svg = atob(pathname.substring(prefix.length))
+  return handleDataUri(pathname.substring(1))
+}
+
+export async function handleDataUri(uri: string): Promise<Response> {
+  // reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+  const match = uri.match(/data:(.*?)?(;base64)?,(.*)/)
+
+  if (!match) {
+    throw new Error(`${uri} is not a valid data URI`)
+  }
+
+  const [, mimeType, base64Encoding, data] = match
+  const decodedData = base64Encoding ? atob(data) : data
+
+  if (mimeType === 'image/svg+xml') {
+    return inlineExternalResources(decodedData)
+  } else {
+    const headers: HeadersInit = new Headers({})
+    headers.set('content-type', mimeType)
+    headers.set('cache-control', 'public, max-age=31536000, immutable')
+    return new Response(decodedData, { headers })
+  }
+}
+
+async function inlineExternalResources(svg: string) {
   const urls = collectUrls(svg)
 
   const warnings: string[] = []

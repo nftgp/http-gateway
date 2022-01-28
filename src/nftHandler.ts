@@ -1,12 +1,12 @@
 import { AbiCoder } from '@ethersproject/abi'
-import { ipfsUriToGatwayUri } from './ipfs'
+import { ipfsUriToGatewayUri } from './ipfs'
 import { call } from './jsonRpc'
 
 export async function handleRequest(request: Request): Promise<Response> {
   const { pathname } = new URL(request.url)
   let nftUriString = pathname.substring(1)
   if (nftUriString.startsWith('nft:/') && !nftUriString.startsWith('nft://')) {
-    // browsers automatically remove duplicate slashes in pathnames
+    // browsers automatically remove duplicate slashes in path names
     nftUriString = `nft://` + nftUriString.substring(5)
   }
   const nftUri = parseNftSchemeUri(nftUriString)
@@ -14,8 +14,8 @@ export async function handleRequest(request: Request): Promise<Response> {
 
   if (!tokenUriString) {
     return new Response(null, {
-      status: 204,
-      statusText: 'tokenURI is empty',
+      status: 404,
+      statusText: 'No tokenURI found',
     })
   }
 
@@ -29,10 +29,14 @@ export async function handleRequest(request: Request): Promise<Response> {
     })
   }
 
-  if (tokenUrl.protocol === 'http:' || tokenUrl.protocol === 'https:') {
-    return fetchAndStream(tokenUriString)
+  if (
+    tokenUrl.protocol === 'http:' ||
+    tokenUrl.protocol === 'https:' ||
+    tokenUrl.protocol === 'data:'
+  ) {
+    return fetchTokenData(tokenUriString)
   } else if (tokenUrl.protocol === 'ipfs:') {
-    return fetchAndStream(ipfsUriToGatwayUri(tokenUriString))
+    return fetchTokenData(ipfsUriToGatewayUri(tokenUriString))
   }
 
   return new Response(null, {
@@ -45,11 +49,18 @@ interface JSONObject {
   [x: string]: unknown
 }
 
-async function fetchAndStream(uri: string): Promise<Response> {
+// A wrapper around fetch that can handle data scheme URIs and resolves EIP-721 JSON metadata files.
+async function fetchTokenData(uri: string): Promise<Response> {
   const response = await fetch(uri)
 
   if (!response.ok) {
-    console.log(await response.text())
+    if (response.status === 404) {
+      return new Response(null, {
+        status: 404,
+        statusText: `Token at ${uri} not found (${response.status}: ${response.statusText})`,
+      })
+    }
+
     return new Response(null, {
       status: 502,
       statusText: `Error fetching token URI ${uri} (${response.status}: ${response.statusText})`,
@@ -77,10 +88,10 @@ async function fetchAndStream(uri: string): Promise<Response> {
       })
     }
 
-    // support non-standard imageUrl as fallback
+    // support non-standard imageUrl as fallback (used by OpenSea)
     const image = (json.image || json.imageUrl) as string | undefined
     if (image) {
-      return fetchAndStream(image)
+      return fetchTokenData(image)
     }
 
     // The json does not seem to be ERC721 Metadata, so we consider it to be the token itself.

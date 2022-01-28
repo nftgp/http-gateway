@@ -14,10 +14,10 @@ describe('nft scheme uri handling', () => {
       jest.resetModules()
     })
 
-    it('responds the data ', async () => {
+    it.only('responds the data ', async () => {
       const result = await handleRequest(
         new Request(
-          '/nft://1.latest/0x2a46f2ffd99e19a89476e2f62270e0a35bbf0756/40913/EVERYDAYS%3A%20THE%20FIRST%205000%20DAYS.jpg',
+          '/nft://1/0x0747118c9f44c7a23365b2476dcd05e03114c747/1/Three%20Shields%20on%20Pink%20Perfect.svg',
           {
             method: 'GET',
           },
