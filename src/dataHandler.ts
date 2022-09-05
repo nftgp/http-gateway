@@ -124,7 +124,7 @@ export async function fetchData(url: string): Promise<string> {
 
     if (bytesReceived > MAX_FILE_SIZE) {
       throw new Error(
-        `linked file ${url} exceeds limit of ${MAX_FILE_SIZE / 1000}kb`,
+        `linked file ${url} exceeds limit of ${MAX_FILE_SIZE / 1024}kb`,
       )
     }
     result += String.fromCharCode(...value)
