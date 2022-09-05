@@ -29,7 +29,7 @@ describe('data scheme uri handling', () => {
     it('handles svg data', async () => {
       const result = await handleRequest(
         new Request(
-          '/data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1XNXptUjJjOXhqeU03OTVWUkFjRjViV0g5NGNtemtqc2JqNUNqNFN4Q3BpVSIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+',
+          '/data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj4KICA8aW1hZ2UgaHJlZj0iaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL25mdGdwL2h0dHAtZ2F0ZXdheS9tYWluL3Rlc3QvdGVzdC5zdmciIGhlaWdodD0iMjAwIiB3aWR0aD0iMjAwIi8+Cjwvc3ZnPg==',
           { method: 'GET' },
         ),
       )
@@ -37,7 +37,7 @@ describe('data scheme uri handling', () => {
       const text = await result.text()
       expect(text).toMatchInlineSnapshot(`
         "<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"200\\" height=\\"200\\">
-            <image href=\\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMCIgeDI9IjIwMCIgeTI9IjIwMCIgc3Ryb2tlPSJkZWVwcGluayIgc3Ryb2tlLXdpZHRoPSI4Ii8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjIwMCIgeDI9IjIwMCIgeTI9IjAiIHN0cm9rZT0iZGVlcHBpbmsiIHN0cm9rZS13aWR0aD0iOCIvPgo8L3N2Zz4=\\" height=\\"200\\" width=\\"200\\"/>
+          <image href=\\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj4KICA8bGluZSB4MT0iMCIgeTE9IjAiIHgyPSIyMDAiIHkyPSIyMDAiIHN0cm9rZT0iZGVlcHBpbmsiIHN0cm9rZS13aWR0aD0iOCIvPgogIDxsaW5lIHgxPSIwIiB5MT0iMjAwIiB4Mj0iMjAwIiB5Mj0iMCIgc3Ryb2tlPSJkZWVwcGluayIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjwvc3ZnPg==\\" height=\\"200\\" width=\\"200\\"/>
         </svg>"
       `)
     })
