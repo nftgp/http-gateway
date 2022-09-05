@@ -91,10 +91,10 @@ describe('data scheme uri handling', () => {
     it('returns data URI', async () => {
       expect(
         await fetchData(
-          'https://gateway.pinata.cloud/ipfs/QmaVXNTjcbezSZj8BCxURZdB568e3ppQCnFDu7nYmfTL9y',
+          'https://raw.githubusercontent.com/nftgp/http-gateway/main/test/test.svg',
         ),
       ).toMatchInlineSnapshot(
-        `"data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1UUXJQR0RmMnhpZ0FLMnB0RGhka3ZTRjJFZlJNWHBhRkdKS0JOUktZUkJIdiIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KICAgIDxpbWFnZSBocmVmPSJodHRwczovL2dhdGV3YXkucGluYXRhLmNsb3VkL2lwZnMvUW1kU0RxaDJnMTNHVVcybnZQa3dBQ0g1cTE2VlpxVlJMRjRSU1B6REw0REF0NiIgaGVpZ2h0PSIyMDAiIHdpZHRoPSIyMDAiLz4KPC9zdmc+"`,
+        `"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj4KICA8bGluZSB4MT0iMCIgeTE9IjAiIHgyPSIyMDAiIHkyPSIyMDAiIHN0cm9rZT0iZGVlcHBpbmsiIHN0cm9rZS13aWR0aD0iOCIvPgogIDxsaW5lIHgxPSIwIiB5MT0iMjAwIiB4Mj0iMjAwIiB5Mj0iMCIgc3Ryb2tlPSJkZWVwcGluayIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjwvc3ZnPg=="`,
       )
     })
   })
