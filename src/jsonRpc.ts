@@ -1,6 +1,7 @@
 const RPC_ENDPOINTS: { [chainId: number]: string } = {
-  1: 'https://cloudflare-eth.com',
-  4: 'https://rinkeby.cloudflare-eth.com',
+  1: 'https://cloudflare-eth.com/v1/mainnet',
+  5: 'https://cloudflare-eth.com/v1/goerli',
+  11155111: 'https://cloudflare-eth.com/v1/sepolia',
   100: 'https://xdai-archive.blockscout.com',
 }
 
