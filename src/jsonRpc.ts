@@ -1,8 +1,8 @@
 const RPC_ENDPOINTS: { [chainId: number]: string } = {
   1: 'https://cloudflare-eth.com/v1/mainnet',
-  5: 'https://cloudflare-eth.com/v1/goerli',
-  11155111: 'https://cloudflare-eth.com/v1/sepolia',
-  100: 'https://xdai-archive.blockscout.com',
+  5: 'https://rpc.ankr.com/eth_goerli',
+  11155111: 'https://rpc.sepolia.org',
+  100: 'https://rpc.gnosis.gateway.fm',
 }
 
 interface TransactionCall {
